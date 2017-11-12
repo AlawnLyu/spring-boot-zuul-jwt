@@ -1,8 +1,25 @@
+oauthserver:
+  config:
+    url: http://localhost:9000/
+    accesstokenuri: /oauth/token
+
 zuul:
   routes:
     api:
       path: /api/**
       url: http://localhost:8088/
+    user_auth:
+      path: /auth/**
+      url: ${oauthserver.config.url}
+      #serviceId: user_auth
+
+#ribbon:
+#  eureka:
+#    enabled: false
+#
+#user_auth:  #这是ribion要请求的serviceID
+#  ribbon:
+#    listOfServers: ${oauthserver.config.url}
 
 server:
   port: 8080
@@ -13,3 +30,8 @@ jwt:
     secret: d3Rvd25hcGk=
     expiration: 86400000
     issuer: wtown
+
+logging:
+  level:
+    root: INFO
+    com.wtown.userauthentication.apigate: DEBUG

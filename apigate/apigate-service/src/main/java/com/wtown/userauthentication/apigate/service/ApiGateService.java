@@ -12,6 +12,10 @@ import com.wtown.userauthentication.common.model.dto.ResultDTO;
 public interface ApiGateService {
     String getSecret();
 
+    String getOAuthServiceLocation();
+
+    String getOAuthAccessTokenUri();
+
     Boolean shouldFilter(String token,String uri);
 
     ResultDTO checkPermission(String token, String uri);

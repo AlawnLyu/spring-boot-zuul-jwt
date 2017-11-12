@@ -25,9 +25,25 @@ public class ApiGateServiceImpl implements ApiGateService {
     @Value("${jwt.token.secret}")
     private String secret;
 
+    @Value("${oauthserver.config.url}")
+    private String oAuthServiceLocation;
+
+    @Value("${oauthserver.config.accesstokenuri}")
+    private String oAuthAccessTokenUri;
+
     @Override
     public String getSecret() {
         return secret;
+    }
+
+    @Override
+    public String getOAuthServiceLocation() {
+        return oAuthServiceLocation;
+    }
+
+    @Override
+    public String getOAuthAccessTokenUri() {
+        return oAuthAccessTokenUri;
     }
 
     @Override

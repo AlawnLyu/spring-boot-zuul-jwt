@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-       <!-- <start-class>com.wtown.userauthentication.userauth.UserAuthStarter</start-class> -->
+        <!--<start-class>com.wtown.userauthentication.userauth.UserAuthStarter</start-class>-->
 		<start-class>com.wtown.userauthentication.apigate.ApiGateStarter</start-class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

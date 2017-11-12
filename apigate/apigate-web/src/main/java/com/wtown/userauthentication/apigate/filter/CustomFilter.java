@@ -14,16 +14,26 @@ import com.netflix.zuul.http.ServletInputStreamWrapper;
 import com.wtown.userauthentication.apigate.service.ApiGateService;
 import com.wtown.userauthentication.common.converter.json.JsonDataUtil;
 import com.wtown.userauthentication.common.model.dto.ResultDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.netflix.zuul.filters.Route;
+import org.springframework.cloud.netflix.zuul.filters.SimpleRouteLocator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
 public class CustomFilter extends ZuulFilter {
+
+    public final static Logger logger = LoggerFactory.getLogger(CustomFilter.class);
+
+    @Autowired
+    public SimpleRouteLocator simpleRouteLocator;
 
     @Autowired
     private JsonDataUtil jsonDataUtil;
@@ -45,17 +55,34 @@ public class CustomFilter extends ZuulFilter {
     public boolean shouldFilter() {
         try {
             RequestContext requestContext = getCurrentContext();
-            String authorizationHeader = requestContext.getRequest().getHeader(HttpHeaders.AUTHORIZATION);
+            HttpServletRequest request = requestContext.getRequest();
+
+            String actualPath = getUri(request.getRequestURI());
+            String targetLocation = getTargetLocation(request.getRequestURI());
+
+            if (logger.isDebugEnabled()){
+                logger.debug("request.getRequestURI: " + request.getRequestURI());
+                logger.debug("request.getServletPath: " + request.getServletPath());
+                logger.debug("request.getRequestURL: " + request.getRequestURL());
+                logger.debug("actualPath: " + actualPath);
+                logger.debug("targetLocation: " + targetLocation);
+            }
+
+            if (targetLocation.equals(gateService.getOAuthServiceLocation()) && actualPath.equals(gateService.getOAuthAccessTokenUri())){
+                return false;
+            }
+
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             String token = authorizationHeader.substring("Bearer".length()).trim();
             if (token.isEmpty() || token.equals("")) {
                 return true;
             }
-            System.out.println(token);
-            System.out.println(requestContext.getRequest().getRequestURI());
-            System.out.println(requestContext.getRequest().getServletPath());
-            System.out.println(requestContext.getRequest().getRequestURL().toString());
 
-            return gateService.shouldFilter(token, getUri(requestContext.getRequest().getRequestURI()));
+            if (logger.isDebugEnabled()){
+                logger.debug("finding accesstoken from header: " + token);
+            }
+
+            return gateService.shouldFilter(token, actualPath);
         } catch (Exception e) {
             //e.printStackTrace();
             return true;
@@ -119,6 +146,12 @@ public class CustomFilter extends ZuulFilter {
     }
 
     private String getUri(String requestUri) {
-        return requestUri.substring("/api".length());
+        Route route = simpleRouteLocator.getMatchingRoute(requestUri);
+        return route.getPath();
+    }
+
+    private String getTargetLocation(String requestUri) {
+        Route route = simpleRouteLocator.getMatchingRoute(requestUri);
+        return route.getLocation();
     }
 }
