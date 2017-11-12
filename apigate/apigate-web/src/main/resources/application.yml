@@ -1,0 +1,15 @@
+zuul:
+  routes:
+    api:
+      path: /api/**
+      url: http://localhost:8088/
+
+server:
+  port: 8080
+
+jwt:
+#  header: Authorization
+  token:
+    secret: d3Rvd25hcGk=
+    expiration: 86400000
+    issuer: wtown
