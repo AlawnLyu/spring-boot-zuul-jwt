@@ -11,6 +11,9 @@ import com.wtown.userauthentication.common.model.userauth.Sys_resource;
 import com.wtown.userauthentication.common.model.userauth.Sys_role;
 import com.wtown.userauthentication.common.model.userauth.Sys_role_resource;
 import com.wtown.userauthentication.common.model.userauth.Sys_user;
+import com.wtown.userauthentication.userauth.dao.SysResourceDao;
+import com.wtown.userauthentication.userauth.dao.SysRoleDao;
+import com.wtown.userauthentication.userauth.dao.SysRoleResourceDao;
 import com.wtown.userauthentication.userauth.dao.SysUserDao;
 import com.wtown.userauthentication.userauth.service.OAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,15 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Autowired
     private SysUserDao userDao;
+
+    @Autowired
+    private SysRoleDao roleDao;
+
+    @Autowired
+    private SysResourceDao resourceDao;
+
+    @Autowired
+    private SysRoleResourceDao roleResourceDao;
 
     @Override
     public String getSecret() {
@@ -54,21 +66,21 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Override
     public String getRoleNameByUserId(Long id) {
-        Sys_role role = userDao.getRoleById(userDao.getRoleIdByUserId(id));
+        Sys_role role = roleDao.getRoleById(roleDao.getRoleIdByUserId(id));
         return role.getName();
     }
 
     @Override
     public Boolean checkPermission(String role_name, String uri) {
-        Sys_role role = userDao.getRoleByName(role_name);
+        Sys_role role = roleDao.getRoleByName(role_name);
         if (role == null) {
             return false;
         }
-        Sys_resource resource = userDao.getResourceByUrl(uri);
+        Sys_resource resource = resourceDao.getResourceByUrl(uri);
         if (resource == null) {
             return false;
         }
-        Sys_role_resource role_resource = userDao.getRoleResource(role.getId(), resource.getId());
+        Sys_role_resource role_resource = roleResourceDao.getRoleResource(role.getId(), resource.getId());
         if (role_resource == null) {
             return false;
         }
@@ -77,11 +89,11 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Override
     public Boolean shouldFilter(String role_name, String uri) {
-        Sys_role role = userDao.getRoleByName(role_name);
+        Sys_role role = roleDao.getRoleByName(role_name);
         if (role == null) {
             return true;
         }
-        if (!role.getCode().equals("superManager")){
+        if (!role.getCode().equals("superManager")) {
             return true;
         }
         return false;

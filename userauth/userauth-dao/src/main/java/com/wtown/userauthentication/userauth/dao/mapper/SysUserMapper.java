@@ -7,31 +7,79 @@
 
 package com.wtown.userauthentication.userauth.dao.mapper;
 
-import com.wtown.userauthentication.common.model.userauth.Sys_resource;
-import com.wtown.userauthentication.common.model.userauth.Sys_role;
-import com.wtown.userauthentication.common.model.userauth.Sys_role_resource;
 import com.wtown.userauthentication.common.model.userauth.Sys_user;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface SysUserMapper {
     @Select("SELECT u.id,u.user_name,u.`status`,u.pwd,u.salt FROM sys_user u WHERE u.`status` = 1 and u.user_name = #{user_name}; ")
     Sys_user getSingleUserByName(String user_name);
 
-    @Select("SELECT ur.role_id FROM sys_user_role ur WHERE ur.user_id = #{id};")
-    Long getRoleByUserId(Long id);
+    @Insert("INSERT INTO sys_user(\n" +
+            "  mobile_phone\n" +
+            "  ,user_name\n" +
+            "  ,nickname\n" +
+            "  ,pwd\n" +
+            "  ,salt\n" +
+            "  ,signature\n" +
+            "  ,gender\n" +
+            "  ,qq\n" +
+            "  ,email\n" +
+            "  ,avatar\n" +
+            "  ,province\n" +
+            "  ,city\n" +
+            "  ,reg_ip\n" +
+            "  ,score\n" +
+            "  ,status\n" +
+            "  ,create_by\n" +
+            "  ,create_at\n" +
+            "  ,update_by\n" +
+            "  ,update_at\n" +
+            ") VALUES (\n" +
+            "  #{mobile_phone} -- mobile_phone - IN varchar(255)\n" +
+            "  ,#{user_name}  -- user_name - IN varchar(50)\n" +
+            "  ,#{nickname}  -- nickname - IN varchar(255)\n" +
+            "  ,#{pwd} -- pwd - IN varchar(255)\n" +
+            "  ,#{salt}  -- salt - IN varchar(255)\n" +
+            "  ,#{signature}  -- signature - IN varchar(255)\n" +
+            "  ,#{gender}   -- gender - IN tinyint(1)\n" +
+            "  ,#{qq}   -- qq - IN bigint(20)\n" +
+            "  ,#{email}  -- email - IN varchar(255)\n" +
+            "  ,#{avatar}  -- avatar - IN varchar(500)\n" +
+            "  ,#{province}  -- province - IN varchar(50)\n" +
+            "  ,#{city}  -- city - IN varchar(50)\n" +
+            "  ,#{reg_ip}  -- reg_ip - IN varchar(50)\n" +
+            "  ,#{score}   -- score - IN int(10)\n" +
+            "  ,#{status}   -- status - IN int(10)\n" +
+            "  ,#{create_by}   -- create_by - IN bigint(20)\n" +
+            "  ,#{create_at}  -- create_at - IN datetime\n" +
+            "  ,#{update_by}   -- update_by - IN bigint(20)\n" +
+            "  ,#{update_at}  -- update_at - IN datetime\n" +
+            ")")
+    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = java.lang.Long.class)
+    Long insert(Sys_user user);
 
-    @Select("SELECT r.id,r.`name`,r.`code`,r.`status` FROM sys_role r WHERE r.`status` = 1 and r.id = #{id}")
-    Sys_role getRoleById(Long id);
-
-    @Select("SELECT r.id,r.`name`,r.`code`,r.`status` FROM sys_role r WHERE r.`status` = 1 and r.name = #{name}")
-    Sys_role getRoleByName(String name);
-
-    @Select("SELECT rs.id,rs.type,rs.`name`,rs.sort,rs.url FROM sys_resource rs WHERE rs.`status` = 1 AND rs.url = #{uri};")
-    Sys_resource getResourceByUrl(String uri);
-
-    @Select("SELECT rr.id FROM sys_role_resource rr WHERE rr.role_id = #{role_id} AND rr.resource_id = #{resource_id}")
-    Sys_role_resource getRoleResource(@Param("role_id") Long role_id,@Param("resource_id") Long resource_id);
+    @Update("UPDATE sys_user\n" +
+            "SET\n" +
+            "  mobile_phone = #{mobile_phone} -- varchar(255)\n" +
+            "  ,user_name = #{user_name} -- varchar(50)\n" +
+            "  ,nickname = #{nickname} -- varchar(255)\n" +
+            "  ,pwd = #{pwd} -- varchar(255)\n" +
+            "  ,salt = #{salt} -- varchar(255)\n" +
+            "  ,signature = #{signature} -- varchar(255)\n" +
+            "  ,gender = #{gender} -- tinyint(1)\n" +
+            "  ,qq = #{qq} -- bigint(20)\n" +
+            "  ,email = #{email} -- varchar(255)\n" +
+            "  ,avatar = #{avatar} -- varchar(500)\n" +
+            "  ,province = #{province} -- varchar(50)\n" +
+            "  ,city = #{city} -- varchar(50)\n" +
+            "  ,reg_ip = #{reg_ip} -- varchar(50)\n" +
+            "  ,score = #{score} -- int(10)\n" +
+            "  ,status = #{status} -- int(10)\n" +
+            "  ,create_by = #{create_by} -- bigint(20)\n" +
+            "  ,create_at = #{create_at} -- datetime\n" +
+            "  ,update_by = #{update_by} -- bigint(20)\n" +
+            "  ,update_at = #{update_at} -- datetime\n" +
+            "WHERE id = #{id} -- bigint(20)")
+    void update(Sys_user user);
 }

@@ -8,7 +8,6 @@
 package com.wtown.userauthentication.userauth.dao.impl;
 
 import com.wtown.userauthentication.common.model.userauth.Sys_resource;
-import com.wtown.userauthentication.common.model.userauth.Sys_role;
 import com.wtown.userauthentication.common.model.userauth.Sys_role_resource;
 import com.wtown.userauthentication.common.model.userauth.Sys_user;
 import com.wtown.userauthentication.userauth.dao.SysUserDao;
@@ -28,27 +27,13 @@ public class SysUserDaoImpl implements SysUserDao {
     }
 
     @Override
-    public Long getRoleIdByUserId(Long id) {
-        return userMapper.getRoleByUserId(id);
+    public void insert(Sys_user user) {
+        userMapper.insert(user);
     }
 
     @Override
-    public Sys_role getRoleById(Long id) {
-        return userMapper.getRoleById(id);
+    public void update(Sys_user user) {
+        userMapper.update(user);
     }
 
-    @Override
-    public Sys_role getRoleByName(String rname) {
-        return userMapper.getRoleByName(rname);
-    }
-
-    @Override
-    public Sys_resource getResourceByUrl(String uri) {
-        return userMapper.getResourceByUrl(uri);
-    }
-
-    @Override
-    public Sys_role_resource getRoleResource(Long role_id, Long resource_id) {
-        return userMapper.getRoleResource(role_id, resource_id);
-    }
 }

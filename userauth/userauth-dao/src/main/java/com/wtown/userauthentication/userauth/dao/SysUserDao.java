@@ -15,13 +15,7 @@ import com.wtown.userauthentication.common.model.userauth.Sys_user;
 public interface SysUserDao {
     Sys_user getUserByName(String uname);
 
-    Long getRoleIdByUserId(Long id);
+    void insert(Sys_user user);
 
-    Sys_role getRoleById(Long id);
-
-    Sys_role getRoleByName(String rname);
-
-    Sys_resource getResourceByUrl(String uri);
-
-    Sys_role_resource getRoleResource(Long role_id, Long resource_id);
+    void update(Sys_user user);
 }
